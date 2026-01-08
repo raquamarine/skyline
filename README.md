@@ -7,6 +7,7 @@ A Discord bot with lua scripting
 -   `python 3.8+`
 -   `discord​.py`
 - `lupa`
+- `requests`
 
 ## Installation
 
