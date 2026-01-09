@@ -1,18 +1,25 @@
+import discord
 import yaml
-import os
+import pathlib
+from pathlib import Path
 import logging
-try:
-    from .utils.lua import init  # for python -m main
-except ImportError:
-    from utils.lua import init   # for python __main__.py (or when lauching directly via an IDE)
-
+from utils.lua_scripting import init
+bot = discord.Bot()
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.DEBUG)
-  config_path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
-  with open(config_path, 'r') as f:
+  #reading cfg
+  parent_directory = Path(__file__).resolve().parent.parent
+  yaml_file = parent_directory / 'config.yaml'
+  with open(yaml_file, 'r') as f:
     config = yaml.safe_load(f)
+  #getting tokens
+  discord_token = config['discord']["token"]
+  #print(discord_token) DONT UNCOMMENT THIS
 
-  token = config['discord']['token']
-  prefix = config.get('discord', {}).get('prefix', '!')
-  bot = init(token, prefix)
-  bot.run(token)
+  logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s') #logging cfg, TODO: add yaml config to save to a file log
+  init(bot)
+  @bot.event
+  async def on_ready():
+    logging.info(f"logged in as {bot.user}")
+
+  bot.run(discord_token)
+
