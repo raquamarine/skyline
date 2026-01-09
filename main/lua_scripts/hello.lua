@@ -1,3 +1,3 @@
 register_command("hello", function(args)
-    discord.send("Hello World")
+    discord.reply("Hello World")
 end)

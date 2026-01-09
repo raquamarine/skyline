@@ -1,19 +1,19 @@
-register_command("cat", function(args)
-    discord.send_cat()
-end)
-
-register_command("dog", function(args)
-    discord.send_dog()
-end)
-
-register_command("bunny", function(args)
+register_command("bunny", function()
     discord.send_bunny()
 end)
 
-register_command("duck", function(args)
+register_command("dog", function()
+    discord.send_dog()
+end)
+
+register_command("cat", function()
+    discord.send_cat()
+end)
+
+register_command("duck", function()
     discord.send_duck()
 end)
 
-register_command("fox", function(args)
+register_command("fox", function()
     discord.send_fox()
 end)
