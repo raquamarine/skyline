@@ -9,8 +9,6 @@ import os
 import logging
 from . import animals
 
-animals_available = True
-
 lua = LuaRuntime(unpack_returned_tuples=True)
 bot = None
 lua_commands = {}
@@ -21,12 +19,7 @@ def create_discord_lib(interaction):
     def reply(msg):
         asyncio.create_task(interaction.followup.send(msg))  # use asyncio or it just times out i guess?
 
-    def _send_image(getter, filename):
-        if not animals_available:
-            reply("animals module not available")
-            logging.error("animals module not available")
-            return
-
+    def _send_image(getter, filename): # wrapper to get the animal image without having to copy and past it 500 times
         image = getter()
         file = discord.File(image, filename=filename)
         asyncio.create_task(interaction.followup.send(file=file))
@@ -109,7 +102,7 @@ def load_all_lua_scripts():
 
 
 # bot init
-def init(bot_instance: commands.Bot):
+def lua_init(bot_instance: commands.Bot):
     global bot
     bot = bot_instance
 
