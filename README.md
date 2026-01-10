@@ -30,26 +30,26 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 #run
-python -m bot
+python -m main
 ```
 
 ### Windows
 
 ```cmd
-#clone repo
+::clone repo
 git clone https://github.com/raquamarine/skyline.git
 cd skyline
-# create venv
+::create venv
 python -m venv .venv
 
-# activate venv
+::activate venv
 .venv\Scripts\activate
 
-# installs dependencies
+::installs dependencies
 pip install -r requirements.txt
 
-#run
-python -m bot
+::run
+python -m main
 ```
 
 ## Configuration
