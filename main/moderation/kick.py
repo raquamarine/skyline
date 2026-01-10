@@ -41,7 +41,8 @@ class Kick(commands.Cog):
         await ctx.send("No permission")
         return
       try:
-        await member.kick()
+        await member.kick(reason=reason)
+        await ctx.send(f"{member} was kicked!")
         writeinfra(member.id, ctx.guild.id, modid, "kick", reason, timestamp, None)
       except Exception as e:
         await ctx.send(f"Failed to softban user: {e}!")

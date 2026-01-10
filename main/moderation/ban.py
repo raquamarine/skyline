@@ -11,8 +11,6 @@ class Ban(commands.Cog):
     self.bot = bot
 
 
-  # BAN SYSTEM
-
   @commands.Cog.listener()
   async def on_member_unban(self, guild, user):
     deactivate_infra(user.id, guild.id, "ban")
@@ -53,6 +51,7 @@ class Ban(commands.Cog):
     timestamp = int(time.time())
     if not ctx.author.guild_permissions.administrator or not ctx.author.guild_permissions.ban_members:
       await ctx.send("No permission")
+      logging.info(f"{ctx.author} has no permission to ban {member}!")
     try:
       await member.ban(reason=reason)
 
@@ -68,14 +67,18 @@ class Ban(commands.Cog):
 
       if duration:
         await ctx.send(f"{member} has been banned for {timedelta(seconds=duration)}!")
+        logging.info(f"{member} has been banned for {duration}")
       else:
         await ctx.send(f"{member} has been banned!")
+        logging.info(f"{member} has been banned")
       writeinfra(member.id, ctx.guild.id, modid, "ban", reason, timestamp, duration)
 
     except discord.Forbidden:
       await ctx.send("I cannot ban this user.")
+      logging.error(f"Cannot ban {member}")
     except discord.HTTPException as e:
       await ctx.send(f"Failed to ban user: {e}")
+      logging.error(f"Failed to ban user {member}")
 
 
 def setup(bot):
