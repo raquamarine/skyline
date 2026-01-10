@@ -114,7 +114,8 @@ ENV/
 env.bak/
 venv.bak/
 db.json
-
+moderation.json
+users.json
 
 # Spyder project settings
 .spyderproject

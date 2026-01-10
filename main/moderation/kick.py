@@ -42,9 +42,11 @@ class Kick(commands.Cog):
         return
       try:
         await member.kick()
-        writeinfra(member.id, ctx.guild.id, modid, "kick", reason, timestamp, None) 
+        writeinfra(member.id, ctx.guild.id, modid, "kick", reason, timestamp, None)
       except Exception as e:
         await ctx.send(f"Failed to softban user: {e}!")
 
 
 
+def setup(bot):
+  bot.add_cog(Kick(bot))
