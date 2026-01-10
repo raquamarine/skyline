@@ -15,8 +15,9 @@ if __name__ == "__main__":
   # yaml config things
 
   discord_token = config['discord']["token"]
-  #readable_json = config['db']['readable_db'] # WIP DONT UNCOMMENT
-  #loads moderation
+
+
+  #loads moderation stuff
   bot.load_extension('main.moderation.ban')
 
 

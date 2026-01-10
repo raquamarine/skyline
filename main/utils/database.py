@@ -2,14 +2,11 @@
 import discord
 from discord.ext import commands
 import tinydb
-from main.__main__ import readable_json
 from tinydb import TinyDB, Query
 from tinydb.storages import JSONStorage
 
-if readable_json == False:
-  db = TinyDB('db.json')
-if readable_json == True:
-  db = TinyDB('db.json', indent=4, sort_keys=True, ensure_ascii=False)
+
+db = TinyDB('moderation.json', indent=4, sort_keys=True, ensure_ascii=False)
 infractions = db.table('infractions')
 
 def writeinfra(user_id, guild_id, moderator_id, type, reason, timestamp, duration):
@@ -22,7 +19,7 @@ def writeinfra(user_id, guild_id, moderator_id, type, reason, timestamp, duratio
     'reason': reason,
     'timestamp': timestamp,
     'duration': duration,  # 0 for perma,
-    'active': True
+    'active': duration is not None #hacky fix
   })
 
 def getinfra(user_id):

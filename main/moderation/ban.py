@@ -1,20 +1,23 @@
 import logging
-from os import write
-
+from datetime import timedelta
 import discord
 from discord.ext import commands, tasks
 import time
 
-from main.utils.database import writeinfra, getinfra, infractions, get_expired_bans, deactivate_infra
+from main.utils.database import writeinfra, infractions,  deactivate_infra
 
 class Ban(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 
+
+  # BAN SYSTEM
+
   @commands.Cog.listener()
   async def on_member_unban(self, guild, user):
     deactivate_infra(user.id, guild.id, "ban")
     logging.info(f"removing ban for {user.id} ({user})")
+
   @tasks.loop(minutes=1)
   async def check_expired_bans(self):
     from tinydb import Query
@@ -45,15 +48,26 @@ class Ban(commands.Cog):
 
 
   @discord.slash_command()
-  async def ban(self, ctx, member: discord.Member, reason=None, duration: int = None):
+  async def ban(self, ctx, member: discord.Member, reason=None, duration: int = None, delete_messages=False):
     modid = ctx.author.id
     timestamp = int(time.time())
     if not ctx.author.guild_permissions.administrator or not ctx.author.guild_permissions.ban_members:
       await ctx.send("No permission")
     try:
       await member.ban(reason=reason)
+
+      if delete_messages == True:
+        for channel in ctx.guild.text_channels:
+          try:
+            async for message in channel.history(limit=None):
+              if message.author == member:
+                await message.delete()
+          except:
+            pass
+
+
       if duration:
-        await ctx.send(f"{member} has been banned for {duration} second(s)!")
+        await ctx.send(f"{member} has been banned for {timedelta(seconds=duration)}!")
       else:
         await ctx.send(f"{member} has been banned!")
       writeinfra(member.id, ctx.guild.id, modid, "ban", reason, timestamp, duration)
@@ -61,7 +75,8 @@ class Ban(commands.Cog):
     except discord.Forbidden:
       await ctx.send("I cannot ban this user.")
     except discord.HTTPException as e:
-      await ctx.send(f"❌ Failed to ban user: {e}")
+      await ctx.send(f"Failed to ban user: {e}")
+
 
 def setup(bot):
   bot.add_cog(Ban(bot))
