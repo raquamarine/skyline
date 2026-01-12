@@ -1,12 +1,11 @@
 import logging
-from datetime import timedelta
-from enum import nonmember
+# TODO: ADD LOGGING
 
 import discord
 from discord.ext import commands, tasks
 import time
 
-from main.utils.database import writeinfra, infractions,  deactivate_infra
+from main.utils.database import writeinfra
 
 class Kick(commands.Cog):
   def __init__(self, bot):
@@ -17,8 +16,9 @@ class Kick(commands.Cog):
     modid = ctx.author.id
     timestamp = int(time.time())
     if not ctx.author.guild_permissions.administrator and not ctx.author.guild_permissions.ban_members:
-      await ctx.send("No permission")
+      await ctx.respond("No permission")
       return
+
     try:
       await member.kick()
       writeinfra(member.id, ctx.guild.id, modid, "softban", reason, timestamp, None) # none because 0 would be perma and -1 and 1 are kinda of buggy
@@ -29,23 +29,27 @@ class Kick(commands.Cog):
               await message.delete()
         except:
           pass
-      await ctx.send(f"Softbanned {member.mention}!")
+      await ctx.respond(f"Softbanned {member.mention}!")
     except Exception as e:
-      await ctx.send(f"Failed to softban user: {e}!") # idk why would it fail but better safe than debug it for 2 hours
+      await ctx.respond(f"Failed to softban user: {e}!") # idk why would it fail but better safe than debug it for 2 hours
 
     @discord.slash_command()
     async def kick(self, ctx, member: discord.Member, reason):
       modid = ctx.author.id
       timestamp = int(time.time())
       if not ctx.author.guild_permissions.administrator and not ctx.author.guild_permissions.ban_members:
-        await ctx.send("No permission")
+        await ctx.respond("No permission")
+        logging.info("Failed to kick: no permission")
         return
+
       try:
         await member.kick(reason=reason)
-        await ctx.send(f"{member} was kicked!")
+        await ctx.respond(f"{member} was kicked!")
+        logging.info(f"{member} was kicked!")
         writeinfra(member.id, ctx.guild.id, modid, "kick", reason, timestamp, None)
       except Exception as e:
-        await ctx.send(f"Failed to softban user: {e}!")
+        await ctx.respond(f"Failed to kick user: {e}!")
+        logging.info(f"Failed to kick user: {e}!")
 
 
 

@@ -50,8 +50,9 @@ class Ban(commands.Cog):
     modid = ctx.author.id
     timestamp = int(time.time())
     if not ctx.author.guild_permissions.administrator or not ctx.author.guild_permissions.ban_members:
-      await ctx.send("No permission")
+      await ctx.respond("No permission")
       logging.info(f"{ctx.author} has no permission to ban {member}!")
+      return
     try:
       await member.ban(reason=reason)
 
@@ -66,18 +67,18 @@ class Ban(commands.Cog):
 
 
       if duration:
-        await ctx.send(f"{member} has been banned for {timedelta(seconds=duration)}!")
+        await ctx.respond(f"{member} has been banned for {timedelta(seconds=duration)}!")
         logging.info(f"{member} has been banned for {duration}")
       else:
-        await ctx.send(f"{member} has been banned!")
+        await ctx.respond(f"{member} has been banned!")
         logging.info(f"{member} has been banned")
       writeinfra(member.id, ctx.guild.id, modid, "ban", reason, timestamp, duration)
 
     except discord.Forbidden:
-      await ctx.send("I cannot ban this user.")
+      await ctx.respond("I cannot ban this user.")
       logging.error(f"Cannot ban {member}")
     except discord.HTTPException as e:
-      await ctx.send(f"Failed to ban user: {e}")
+      await ctx.respond(f"Failed to ban user: {e}")
       logging.error(f"Failed to ban user {member}")
 
 

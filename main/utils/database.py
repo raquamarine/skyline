@@ -6,7 +6,7 @@ from tinydb import TinyDB, Query
 from tinydb.storages import JSONStorage
 
 
-db = TinyDB('moderation.json', indent=4, sort_keys=True, ensure_ascii=False)
+db = TinyDB('moderation.json')
 infractions = db.table('infractions')
 
 def writeinfra(user_id, guild_id, moderator_id, type, reason, timestamp, duration):
