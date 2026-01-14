@@ -12,8 +12,12 @@ if __name__ == "__main__":
   #reading cfg
   parent_directory = Path(__file__).resolve().parent.parent
   yaml_file = parent_directory / 'config.yaml'
-  with open(yaml_file, 'r') as f:
-    config = yaml.safe_load(f)
+
+  try:
+    with open(yaml_file, 'r') as f:
+      config = yaml.safe_load(f)
+  except:
+    print("No config file found!")
 
 
   # yaml config things

@@ -4,9 +4,10 @@ A Discord bot with lua scripting
 
 ## Requirements
 
--   `python 3.8+`
--   `py-cord`
+- `python 3.13` 
+- `py-cord`
 - `lupa`
+- `pyyaml`
 - `requests`
 - `tinydb`
 

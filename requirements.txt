@@ -2,3 +2,4 @@ py-cord
 lupa
 requests 
 tinydb
+pyyaml
