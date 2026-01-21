@@ -3,3 +3,5 @@ lupa
 requests 
 tinydb
 pyyaml
+pysstv
+geopy

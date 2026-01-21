@@ -1,2 +1,5 @@
 discord:
   token: "yourtoken"
+  status: "your custom status"
+bot:
+  lua_enabled: false

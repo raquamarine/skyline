@@ -1,45 +1,58 @@
 import discord
 import yaml
-import pathlib
 from pathlib import Path
 import logging
 from main.utils.lua_scripting import lua_init
 bot = discord.Bot()
+logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', force=True)
 
 
+def loadextensions(*args):
+  for item in args:
+    logging.info(f"Loading: {item}")
+    bot.load_extension(item)
 
 if __name__ == "__main__":
   #reading cfg
   parent_directory = Path(__file__).resolve().parent.parent
   yaml_file = parent_directory / 'config.yaml'
-
   try:
     with open(yaml_file, 'r') as f:
       config = yaml.safe_load(f)
   except:
-    print("No config file found!")
+    logging.error("No config file found!")
 
-
-  # yaml config things
+  # yaml config values
   discord_token = config['discord']["token"]
+  lua_enabled = config['bot']["lua_enabled"]
+  customstatus = config['discord']["status"]
 
 
-  #loads moderation stuff
-  bot.load_extension('main.moderation.ban')
-  bot.load_extension('main.moderation.kick')
-  bot.load_extension('main.moderation.mute')
-  bot.load_extension('main.moderation.warn')
+  cogs = ["main.moderation.ban",
+          "main.moderation.kick",
+          "main.moderation.mute",
+          "main.moderation.warn",
+          "main.commands.animals",
+          "main.commands.sstv",
+          "main.commands.weather",
+          "main.commands.tf2"]
 
-  #normal stuff
-  bot.load_extension('main.commands.animals')
+  loadextensions(*cogs)
+
+  if lua_enabled:
+    lua_init(bot)
 
 
-  logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s') #logging cfg, TODO: add yaml config to save to a file log
-  lua_init(bot)
   @bot.event
   async def on_ready():
     logging.info(f"logged in as {bot.user}")
 
+    if customstatus:
+      logging.info(f"Setting presence to: {customstatus}")
+      await bot.change_presence(activity=discord.CustomActivity(name=customstatus))
+
 
   bot.run(discord_token)
+
+
 

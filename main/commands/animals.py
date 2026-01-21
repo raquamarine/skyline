@@ -1,4 +1,3 @@
-import main.utils.animals
 import logging
 import discord
 from discord.ext import commands, tasks

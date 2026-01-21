@@ -12,7 +12,7 @@ class Mute(commands.Cog):
 
 
   @discord.slash_command()
-  async def mute(self, ctx, member: discord.Member, reason=None, duration: int=None):
+  async def mute(self, ctx, member: discord.Member, reason=None, duration: int=120):
     modid = ctx.author.id
     timestamp = int(time.time())
     if not ctx.author.guild_permissions.administrator or not ctx.author.guild_permissions.ban_members:
@@ -21,9 +21,9 @@ class Mute(commands.Cog):
       return
 
     try:
-      await member.timeout_for(timedelta(seconds=duration))
+      await member.timeout_for(duration=timedelta(seconds=duration))
       writeinfra(member.id, ctx.guild.id, modid, "mute", reason, timestamp, duration)
-      ctx.respond(f"Muted user: {member}, reason: {reason} ")
+      await ctx.respond(f"Muted user: {member}, reason: {reason} ")
 
     except discord.Forbidden:
 

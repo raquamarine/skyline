@@ -1,15 +1,7 @@
 # Skyline
 
-A Discord bot with lua scripting
+A Discord bot with lua scripting (& fun commands)
 
-## Requirements
-
-- `python 3.13` 
-- `py-cord`
-- `lupa`
-- `pyyaml`
-- `requests`
-- `tinydb`
 
 ## Installation
 
