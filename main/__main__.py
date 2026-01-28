@@ -4,7 +4,6 @@ from pathlib import Path
 import logging
 from main.utils.lua_scripting import lua_init
 bot = discord.Bot()
-logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', force=True)
 
 
 def loadextensions(*args):
@@ -13,6 +12,9 @@ def loadextensions(*args):
     bot.load_extension(item)
 
 if __name__ == "__main__":
+  logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
+                      force=True)
+
   #reading cfg
   parent_directory = Path(__file__).resolve().parent.parent
   yaml_file = parent_directory / 'config.yaml'
