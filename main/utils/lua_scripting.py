@@ -12,6 +12,8 @@ import yaml
 import logging
 from . import animals
 import time
+from pysstv.color import MartinM1, ScottieS1, Robot36
+import requests
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
 import requests
@@ -23,7 +25,7 @@ lua_commands = {}
 
 
 # lua bridge
-def create_discord_lib(interaction, command_args):
+def create_discord_lib(interaction, command_args, attachment=None):
     def reply(msg):
         asyncio.create_task(interaction.followup.send(msg))  # use asyncio or it just times out i guess?
     
@@ -112,13 +114,14 @@ def create_discord_lib(interaction, command_args):
     def get_weather(city):
         asyncio.create_task(_get_weather(city))
 
-    async def _sstv(image_url, mode):
-        from pysstv.color import MartinM1, ScottieS1, Robot36
-        import requests
-
+    async def _sstv(mode):
         try:
-            response = requests.get(image_url)
-            img = Image.open(io.BytesIO(response.content))
+            if not attachment:
+                await interaction.followup.send("No image attached")
+                return
+
+            image_bytes = await attachment.read()
+            img = Image.open(io.BytesIO(image_bytes))
 
             if mode == "martin":
                 img = img.resize((320, 256), Image.Resampling.LANCZOS)
@@ -135,11 +138,11 @@ def create_discord_lib(interaction, command_args):
             audio_buffer.seek(0)
 
             await interaction.followup.send(file=discord.File(audio_buffer, filename="sstv.wav"))
-        except:
-            await interaction.followup.send("Failed to generate SSTV")
+        except Exception as e:
+            await interaction.followup.send(f"Failed to generate SSTV: {e}")
 
     def generate_sstv(image_url, mode):
-        asyncio.create_task(_sstv(image_url, mode))
+        asyncio.create_task(_sstv(mode))
     def send_bunny():
         _send_animal_image(animals.get_bunny_image, "bunny.png")
 
