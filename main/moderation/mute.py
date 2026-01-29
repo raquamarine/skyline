@@ -14,7 +14,9 @@ class Mute(commands.Cog):
   @discord.slash_command()
   async def mute(self, ctx, member: discord.Member, reason=None, duration: int=120):
     modid = ctx.author.id
+
     timestamp = int(time.time())
+    await ctx.defer()
     if not ctx.author.guild_permissions.administrator or not ctx.author.guild_permissions.ban_members:
       await ctx.respond("No permission")
       logging.info(f"{ctx.author} has no permission to mute {member}!")

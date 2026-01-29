@@ -2,4 +2,4 @@ discord:
   token: "yourtoken"
   status: "your custom status"
 bot:
-  lua_enabled: false
+  lua_enabled: false # Luas ARE NOT sandboxed, i recommend having it off if you dont know what youre doing
