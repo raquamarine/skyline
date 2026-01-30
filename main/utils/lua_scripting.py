@@ -6,11 +6,9 @@ from discord.ext import commands
 from lupa import LuaRuntime
 import asyncio
 import os
-import io
-from PIL import Image
-import yaml
 import logging
 from . import animals
+<<<<<<< HEAD
 import time
 from pysstv.color import MartinM1, ScottieS1, Robot36
 import requests
@@ -19,21 +17,29 @@ from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
 import requests
 geolocator = Nominatim(user_agent="skyline_bot", timeout=5)
 from main.utils.database import writeinfra
+=======
+
+>>>>>>> parent of ed357ea (added new lua stuff)
 lua = LuaRuntime(unpack_returned_tuples=True)
 bot = None
 lua_commands = {}
 
 
 # lua bridge
+<<<<<<< HEAD
 def create_discord_lib(interaction, command_args, attachment=None):
+=======
+def create_discord_lib(interaction):
+>>>>>>> parent of ed357ea (added new lua stuff)
     def reply(msg):
         asyncio.create_task(interaction.followup.send(msg))  # use asyncio or it just times out i guess?
-    
-    def _send_animal_image(getter, filename): # wrapper to get the animal image without having to copy and past it 500 times
+
+    def _send_image(getter, filename): # wrapper to get the animal image without having to copy and past it 500 times
         image = getter()
         file = discord.File(image, filename=filename)
         asyncio.create_task(interaction.followup.send(file=file))
 
+<<<<<<< HEAD
     def get_arg(name):
       return command_args.get(name, None)
 
@@ -143,20 +149,22 @@ def create_discord_lib(interaction, command_args, attachment=None):
 
     def generate_sstv(image_url, mode):
         asyncio.create_task(_sstv(mode))
+=======
+>>>>>>> parent of ed357ea (added new lua stuff)
     def send_bunny():
-        _send_animal_image(animals.get_bunny_image, "bunny.png")
+        _send_image(animals.get_bunny_image, "bunny.png")
 
     def send_dog():
-        _send_animal_image(animals.get_dog_image, "dog.png")
+        _send_image(animals.get_dog_image, "dog.png")
 
     def send_cat():
-        _send_animal_image(animals.get_cat_image, "cat.png")
+        _send_image(animals.get_cat_image, "cat.png")
 
     def send_duck():
-        _send_animal_image(animals.get_duck_image, "duck.png")
+        _send_image(animals.get_duck_image, "duck.png")
 
     def send_fox():
-        _send_animal_image(animals.get_fox_image, "fox.png")
+        _send_image(animals.get_fox_image, "fox.png")
 
     def author_name():
         return interaction.user.name
@@ -172,16 +180,8 @@ def create_discord_lib(interaction, command_args, attachment=None):
 
     return lua.table(
         reply=reply,
-        has_permission=has_permission,
-        ban_member=ban_member,
-        kick_member=kick_member,
-        mute_member=mute_member,
-        warn_member=warn_member,
         send_bunny=send_bunny,
         send_dog=send_dog,
-        get_arg=get_arg,
-        get_weather=get_weather,
-        generate_sstv=generate_sstv,
         send_cat=send_cat,
         send_duck=send_duck,
         send_fox=send_fox,
@@ -193,25 +193,19 @@ def create_discord_lib(interaction, command_args, attachment=None):
 
 
 # registsers commands
-def register_lua_command(name, description, arguments, lua_function):
-    async def command_handler(ctx, **kwargs):
+def register_lua_command(name, lua_fn):
+    async def handler(ctx):
         await ctx.defer()
-        lua.globals().discord = create_discord_lib(ctx, kwargs)
+        lua.globals().discord = create_discord_lib(ctx)
+
         try:
-            lua_function()
+            lua_fn()
         except Exception as e:
-            await ctx.followup.send(f"Error: {e}")
+            await ctx.followup.send(f"lua error: {e}")
 
-    command_handler.__name__ = name
-
-    for arg_name in reversed(arguments):
-        command_handler = discord.option(
-            name=arg_name,
-            description=arg_name,
-            required=True
-        )(command_handler)
-
-    bot.slash_command(name=name, description=description)(command_handler)
+    handler.__name__ = name
+    bot.slash_command(name=name, description=f"Lua command: {name}")(handler)
+    lua_commands[name] = lua_fn
 
 
 # loads all luas
