@@ -51,6 +51,9 @@ if __name__ == "__main__":
   discord_token = config['discord']["token"]
   lua_enabled = config['bot']["lua_enabled"]
   customstatus = config['discord']["status"]
+  daily_bunny_channels = config["animals"]["daily_bunny_channels"]
+
+  bot.daily_bunny_channels = daily_bunny_channels
 
 
   cogs = ["main.moderation.ban",

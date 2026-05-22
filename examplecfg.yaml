@@ -3,3 +3,7 @@ discord:
   status: "your custom status"
 bot:
   lua_enabled: false
+
+animals:
+  daily_bunny_channels:
+    - yourcustomidhere
