@@ -4,7 +4,30 @@ from pathlib import Path
 import logging
 from main.utils.lua_scripting import lua_init
 bot = discord.Bot()
+_original_slash_command = discord.slash_command
 
+def slash_command(*args, **kwargs):
+
+    kwargs.setdefault(
+        "integration_types",
+        {
+            discord.IntegrationType.guild_install,
+            discord.IntegrationType.user_install
+        }
+    )
+
+    kwargs.setdefault(
+        "contexts",
+        {
+            discord.InteractionContextType.guild,
+            discord.InteractionContextType.bot_dm,
+            discord.InteractionContextType.private_channel
+        }
+    )
+
+    return _original_slash_command(*args, **kwargs)
+
+discord.slash_command = slash_command
 
 def loadextensions(*args):
   for item in args:
