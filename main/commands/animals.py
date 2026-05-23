@@ -2,11 +2,12 @@ import logging
 import discord
 from discord.ext import commands, tasks
 from main.utils.animals import *
-
+import asyncio
+from datetime import datetime, time, timedelta
 
 class Animals(commands.Cog):
   def __init__(self, bot):
-    self.daily_bunny.start()
+    bot.loop.create_task(self.daily_bunny())
     self.bot = bot
   @discord.slash_command()
   async def bunny(self, ctx):
@@ -47,34 +48,32 @@ class Animals(commands.Cog):
     image = get_dog_image()
     await ctx.respond(file=discord.File(image, filename="image.png"))
     logging.info(f"{user} requested dog image")
-  @tasks.loop(hours=24, reconnect=True)
+
   async def daily_bunny(self):
-    channels = self.bot.daily_bunny_channels
-
-    for channel_id in channels:
-      channel = self.bot.get_channel(channel_id)
-
-      if not channel:
-        logging.warning(f"Could not find channel {channel_id}")
-        continue
-
-      try:
-        image = get_bunny_image()
-
-        await channel.send(
-          "Daily bunny",
-          file=discord.File(image, filename="bunny.png")
-        )
-
-        logging.info(f"sent bunny to {channel_id}")
-
-      except Exception as e:
-        logging.error(f"Failed sending bunny to {channel_id}: {e}")
-
-  @daily_bunny.before_loop
-  async def before_daily_bunny(self):
     await self.bot.wait_until_ready()
-    self.bot.loop.create_task(self.daily_bunny())
+
+    target = time(hour=9, minute=0)  # change time here
+
+    while not self.bot.is_closed():
+
+      now = datetime.now()
+      next_run = datetime.combine(now.date(), target)
+
+      if now >= next_run:
+        next_run += timedelta(days=1)
+
+      await asyncio.sleep((next_run - now).total_seconds())
+
+      for channel_id in self.bot.daily_bunny_channels:
+        channel = self.bot.get_channel(channel_id)
+        if not channel:
+          continue
+
+        try:
+          image = get_bunny_image()
+          await channel.send("Daily bunny", file=discord.File(image, "bunny.png"))
+        except:
+          pass
 
 def setup(bot):
   bot.add_cog(Animals(bot))
