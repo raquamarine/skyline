@@ -52,7 +52,7 @@ class Animals(commands.Cog):
   async def daily_bunny(self):
     await self.bot.wait_until_ready()
 
-    target = time(hour=9, minute=0)  # change time here
+    target = time(hour=24, minute=0)  #
 
     while not self.bot.is_closed():
 
