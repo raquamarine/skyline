@@ -90,7 +90,8 @@ if __name__ == "__main__":
 
   @bot.event
   async def on_message(message):
-      await Detect(message=message, bannedwords=bannedword_list)
+      if bannedword_enabled:
+          await Detect(message=message, bannedwords=bannedword_list)
   bot.run(discord_token)
 
 
