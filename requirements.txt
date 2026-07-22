@@ -4,4 +4,8 @@ requests
 tinydb
 pyyaml
 pysstv
+pillow
 geopy
+
+#optional for imagecontent
+pytesseract

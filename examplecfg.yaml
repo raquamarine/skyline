@@ -7,3 +7,8 @@ bot:
 animals:
   daily_bunny_channels:
     - yourcustomidhere
+
+bannedwords:
+  enabled: false
+  list:
+    -puthereyourbannedwords
