@@ -67,12 +67,12 @@ def create_discord_lib(interaction):
 
 # registsers commands
 def register_lua_command(name, lua_fn):
-    async def handler(ctx):
+    async def handler(ctx, text: str = ""):
         await ctx.defer()
         lua.globals().discord = create_discord_lib(ctx)
 
         try:
-            lua_fn()
+            lua_fn(text)
         except Exception as e:
             await ctx.followup.send(f"lua error: {e}")
 
